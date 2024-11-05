@@ -25,6 +25,7 @@ function WeatherChart() {
     const fetchData = async () => {
       try {
         const response = await fetch(process.env.REACT_APP_API_URL);
+        console.log("API URL:", process.env.REACT_APP_API_URL);
         const result = await response.json();
     
         const weatherData = result.flatMap((device) =>
