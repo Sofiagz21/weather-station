@@ -27,35 +27,36 @@ function WeatherChart() {
         const response = await fetch(process.env.REACT_APP_API_URL);
         console.log("API URL:", process.env.REACT_APP_API_URL);
         const result = await response.json();
-
-        const weatherData = result.flatMap((device) =>
-          device.Sensor.flatMap((sensor) =>
-            sensor.WeatherData.map((entry) => ({
-              temperature: entry.Data.temperature,
-              humidity: entry.Data.humidity,
-              pressure: entry.Data.pressure,
-              CreationDate: entry.CreationDate,
-            }))
-          )
-        );
-
+        console.log("API response:", result);
+  
+        // Ajusta el acceso a los datos dependiendo de la estructura que devuelva la API.
+        const weatherData = result.Sensor?.flatMap(sensor =>
+          sensor.WeatherData.map(entry => ({
+            temperature: entry.Data.temperature,
+            humidity: entry.Data.humidity,
+            pressure: entry.Data.pressure,
+            CreationDate: entry.CreationDate,
+          }))
+        ) || []; // Si no hay datos, devolvemos un arreglo vacío
+  
         const sortedData = weatherData.sort(
           (a, b) => new Date(a.CreationDate) - new Date(b.CreationDate)
         );
         setData(sortedData);
-
+  
         // Extraer los días únicos
         const days = Array.from(
-          new Set(sortedData.map((item) => item.CreationDate.split("T")[0]))
+          new Set(sortedData.map(item => item.CreationDate.split("T")[0]))
         );
         setAvailableDays(days);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
+  
     fetchData();
   }, []);
+  
 
   useEffect(() => {
     const filtered =
