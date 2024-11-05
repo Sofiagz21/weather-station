@@ -24,11 +24,9 @@ function WeatherChart() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "http://ec2-98-81-173-38.compute-1.amazonaws.com:3000/api/v1/devices"
-        );
+        const response = await fetch(process.env.REACT_APP_API_URL);
         const result = await response.json();
-
+    
         const weatherData = result.flatMap((device) =>
           device.Sensor.flatMap((sensor) =>
             sensor.WeatherData.map((entry) => ({
@@ -39,16 +37,11 @@ function WeatherChart() {
             }))
           )
         );
-
+    
         const sortedData = weatherData.sort(
           (a, b) => new Date(a.CreationDate) - new Date(b.CreationDate)
         );
         setData(sortedData);
-
-        const days = Array.from(
-          new Set(sortedData.map((item) => item.CreationDate.split("T")[0]))
-        );
-        setAvailableDays(days);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -66,15 +59,20 @@ function WeatherChart() {
     setFilteredData(filtered);
 
     const totalTemp = filtered.reduce((acc, item) => acc + item.temperature, 0);
-    const totalHumidity = filtered.reduce((acc, item) => acc + item.humidity, 0);
-    const totalPressure = filtered.reduce((acc, item) => acc + item.pressure, 0);
+    const totalHumidity = filtered.reduce(
+      (acc, item) => acc + item.humidity,
+      0
+    );
+    const totalPressure = filtered.reduce(
+      (acc, item) => acc + item.pressure,
+      0
+    );
 
     setAverageTemp((totalTemp / filtered.length).toFixed(2) || 0);
     setAverageHumidity((totalHumidity / filtered.length).toFixed(2) || 0);
     setAveragePressure((totalPressure / filtered.length).toFixed(2) || 0);
   }, [selectedDay, data]);
 
-  // Función para mostrar la fecha y hora en formato claro
   const formatXAxis = (tick) => {
     const date = new Date(tick);
     return date.toLocaleString("es-ES", {
@@ -92,10 +90,12 @@ function WeatherChart() {
   return (
     <div className="weather-dashboard p-2 m-2">
       <div className="boxt m-2">
-        <h1 className="title fw-bold">Weather Station Dashboard 👨‍🔬🌡️</h1>
+        <h1 className="title fw-bold text-center">
+          Weather Station Dashboard 👨‍🔬🌡️
+        </h1>
       </div>
 
-      <div className="day-buttons my-5 px-5">
+      <div className="day-buttons my-4 px-3">
         <button
           onClick={() => setSelectedDay("General")}
           className={selectedDay === "General" ? "selected" : ""}
@@ -113,29 +113,36 @@ function WeatherChart() {
         ))}
       </div>
 
-      <div className="row mb-4 px-5">
-        <div className="col-md-4">
+      {/* Estadísticas clave, responsivas en pantallas pequeñas */}
+      <div className="row mb-4 px-2">
+        <div className="col-12 col-md-4">
           <div className="bg-white p-3 rounded shadow text-center">
             <h3>Temperatura Promedio (°C)</h3>
-            <p>{averageTemp}</p>
+            <div className="circle">
+              <p>{averageTemp}</p>
+            </div>
           </div>
         </div>
-        <div className="col-md-4">
+        <div className="col-12 col-md-4 mt-3 mt-md-0">
           <div className="bg-white p-3 rounded shadow text-center">
             <h3>Humedad Promedio (%)</h3>
-            <p>{averageHumidity}</p>
+            <div className="circle">
+              <p>{averageHumidity}</p>
+            </div>
           </div>
         </div>
-        <div className="col-md-4">
+        <div className="col-12 col-md-4 mt-3 mt-md-0">
           <div className="bg-white p-3 rounded shadow text-center">
             <h3>Presión Promedio (hPa)</h3>
-            <p>{averagePressure}</p>
+            <div className="circle">
+              <p>{averagePressure}</p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Gráfica General */}
-      <div className="bg-white p-3 rounded shadow mb-4 mx-5">
+      <div className="bg-white p-3 rounded shadow mb-4 mx-1">
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={filteredData}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -143,18 +150,32 @@ function WeatherChart() {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="temperature" stroke="#8884d8" name="Temperature (°C)" />
-            <Line type="monotone" dataKey="humidity" stroke="#82ca9d" name="Humidity (%)" />
-            <Line type="monotone" dataKey="pressure" stroke="#ffc658" name="Pressure (hPa)" />
+            <Line
+              type="monotone"
+              dataKey="temperature"
+              stroke="#8884d8"
+              name="Temperature (°C)"
+            />
+            <Line
+              type="monotone"
+              dataKey="humidity"
+              stroke="#82ca9d"
+              name="Humidity (%)"
+            />
+            <Line
+              type="monotone"
+              dataKey="pressure"
+              stroke="#ffc658"
+              name="Pressure (hPa)"
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
       {/* Gráficas de Temperatura, Humedad y Presión en una sola fila */}
-      <div className="row mx-5">
-        {/* Gráfica de Temperatura */}
-        <div className="col-md-4">
-          <div className="bg-white p-3 rounded shadow mb-4">
+      <div className="row mx-1">
+        <div className="col-12 col-md-4 mb-4">
+          <div className="bg-white p-3 rounded shadow">
             <h3 className="text-center">Temperatura (°C)</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={filteredData}>
@@ -168,9 +189,8 @@ function WeatherChart() {
           </div>
         </div>
 
-        {/* Gráfica de Humedad */}
-        <div className="col-md-4">
-          <div className="bg-white p-3 rounded shadow mb-4">
+        <div className="col-12 col-md-4 mb-4">
+          <div className="bg-white p-3 rounded shadow">
             <h3 className="text-center">Humedad (%)</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={filteredData}>
@@ -184,9 +204,8 @@ function WeatherChart() {
           </div>
         </div>
 
-        {/* Gráfica de Presión */}
-        <div className="col-md-4">
-          <div className="bg-white p-3 rounded shadow mb-4">
+        <div className="col-12 col-md-4 mb-4">
+          <div className="bg-white p-3 rounded shadow">
             <h3 className="text-center">Presión (hPa)</h3>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={filteredData}>
@@ -202,7 +221,8 @@ function WeatherChart() {
       </div>
 
       {/* Tabla de datos */}
-      <div className="bg-white p-3 rounded shadow mx-5">
+      {/* Tabla de datos */}
+      <div className="bg-white p-3 rounded shadow mx-1 my-4 table-responsive">
         <table className="table table-striped">
           <thead>
             <tr>
@@ -229,5 +249,3 @@ function WeatherChart() {
 }
 
 export default WeatherChart;
-
-
