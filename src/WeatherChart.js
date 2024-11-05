@@ -27,7 +27,7 @@ function WeatherChart() {
         const response = await fetch(process.env.REACT_APP_API_URL);
         console.log("API URL:", process.env.REACT_APP_API_URL);
         const result = await response.json();
-    
+
         const weatherData = result.flatMap((device) =>
           device.Sensor.flatMap((sensor) =>
             sensor.WeatherData.map((entry) => ({
@@ -38,11 +38,17 @@ function WeatherChart() {
             }))
           )
         );
-    
+
         const sortedData = weatherData.sort(
           (a, b) => new Date(a.CreationDate) - new Date(b.CreationDate)
         );
         setData(sortedData);
+
+        // Extraer los días únicos
+        const days = Array.from(
+          new Set(sortedData.map((item) => item.CreationDate.split("T")[0]))
+        );
+        setAvailableDays(days);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -96,6 +102,7 @@ function WeatherChart() {
         </h1>
       </div>
 
+      {/* Botones para seleccionar el día o mostrar todos los datos */}
       <div className="day-buttons my-4 px-3">
         <button
           onClick={() => setSelectedDay("General")}
@@ -221,7 +228,6 @@ function WeatherChart() {
         </div>
       </div>
 
-      {/* Tabla de datos */}
       {/* Tabla de datos */}
       <div className="bg-white p-3 rounded shadow mx-1 my-4 table-responsive">
         <table className="table table-striped">
