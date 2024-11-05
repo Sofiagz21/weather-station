@@ -1,0 +1,84 @@
+.weather-dashboard {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(4.5px);
+  -webkit-backdrop-filter: blur(4.5px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.boxt {
+  padding: 15px;
+  width: fit-content;
+  border-radius: 10px;
+  background-color: #ffff;
+}
+
+.title {
+  color: #067777;
+  font-size: 40px;
+}
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px; /* Reducido para acercar la gráfica */
+}
+
+.data-table {
+  width: 90%;
+  margin: 20px auto;
+  text-align: center;
+}
+
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.data-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+
+/* BOTONES */
+
+.day-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.day-buttons button {
+  background-color: #d0f5f0; /* Fondo claro */
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: #000000; /* Color del texto */
+  box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.1); /* Sombra suave */
+  cursor: pointer;
+  transition: transform 0.1s, background-color 0.1s;
+  flex: 1; /* Hace que cada botón ocupe el ancho disponible */
+  text-align: center;
+}
+
+.day-buttons button:hover {
+  background-color: #dff7f7; /* Fondo al pasar el ratón */
+  transform: scale(1.05); /* Animación de agrandamiento al hacer hover */
+}
+
+.day-buttons button.selected {
+  background-color: #a4eeee; /* Fondo azul para el seleccionado */
+  color: rgb(18, 18, 46); /* Texto oscuro */
+  box-shadow: 0px 4px 12px rgba(154, 214, 241, 0.4); /* Sombra más fuerte */
+}
+
+
